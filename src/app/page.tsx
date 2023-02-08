@@ -18,7 +18,7 @@ export default function Home() {
           <div className={styles.mainmain}>
             <p>Website coming soon!</p>
             <p>Will be updated with summary + experiences + projects!</p>
-            <p>In the mean time, check out my <a href="https://www.linkedin.com/in/robert-rosas-3a62a0256">LinkedIn</a>!</p>              
+            <p>In the mean time, check out my <a href="https://www.linkedin.com/in/robert-rosas-3a62a0256">LinkedIn</a> and <a href="https://github.com/octillerysnacker">GitHub</a>!</p>              
           </div>
         </div>
 
