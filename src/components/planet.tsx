@@ -1,5 +1,6 @@
-import { animate, motion, useMotionValue } from "framer-motion";
-import { ComponentProps, useEffect } from "react";
+import { rotate, splitValueInclusive, zip } from "@/utils";
+import { MotionValue, easeIn, easeOut, motion, useTransform } from "framer-motion";
+import { ComponentProps } from "react";
 
 export type EllipseParameters = {
     xRadius: number;
@@ -7,49 +8,54 @@ export type EllipseParameters = {
     xOrigin: number;
     yOrigin: number;
     duration: number;
+    rotation?: number;
     delay?: number;
 }
-export type PlanetProps = { orbit: EllipseParameters} & ComponentProps<typeof motion.div>;
+export type PlanetProps = { orbit: EllipseParameters, time: MotionValue<number>} & ComponentProps<typeof motion.div>;
 
 export function Planet(props: PlanetProps) {
+    
+    const {orbit, time} = props;
 
-    const zIndex = useMotionValue(-1);
-    const orbit = props.orbit;
+    const localXCoords = [
+        orbit.xOrigin, 
+        -orbit.xRadius, 
+        orbit.xOrigin, 
+        orbit.xRadius, 
+        orbit.xOrigin]
 
-    useEffect(() => {
-        animate(zIndex, [-1,0,1,0,-1], {
-            ease: ["easeIn", "easeIn", "easeOut", "easeOut"],
-            duration: orbit.duration, 
-            delay: orbit.delay,
-            repeat: Infinity})
+    const localYCoords = [
+        -orbit.yRadius, 
+        orbit.yOrigin, 
+        orbit.yRadius, 
+        orbit.yOrigin, 
+        -orbit.yRadius]
+
+    const rotatedPoints = zip(localXCoords, localYCoords, (x,y) => ({x,y}))
+    .map(p => rotate(p, {x: orbit.xOrigin, y: orbit.yOrigin}, orbit.rotation ?? 0))
+
+    const localTime = useTransform(() => (time.get() + (orbit.delay ?? 0)) % orbit.duration)
+
+    const inputMap = splitValueInclusive(orbit.duration, 5);
+
+    const zIndex = useTransform(localTime, inputMap, [-1,0,1,0,-1], {
+        ease: [easeIn,easeIn, easeOut, easeOut],
+    });
+    const translateX = useTransform(localTime, inputMap, rotatedPoints.map(p => p.x), {
+        ease: [easeOut, easeIn, easeOut, easeIn],
+    });
+
+    const translateY = useTransform(localTime, inputMap, rotatedPoints.map(p => p.y), {
+        ease: [easeIn, easeOut, easeIn, easeOut],
     })
-
     
   return (
     <motion.div
     {...props}
-      animate={{
-        translateX: [orbit.xOrigin, -orbit.xRadius, orbit.xOrigin, orbit.xRadius, orbit.xOrigin],
-        translateY: [-orbit.yRadius, orbit.yOrigin, orbit.yRadius, orbit.yOrigin, -orbit.yRadius],
-      }}
-      transition={{
-
-        translateX: {
-          ease: ["easeOut", "easeIn", "easeOut", "easeIn"], // Ideally these would be sine curves but I don't have those right now
-          delay: orbit.delay ?? 0,
-          duration: orbit.duration,
-          repeat: Infinity,
-        },
-        translateY: {
-          ease: ["easeIn", "easeOut", "easeIn", "easeOut"],
-          delay: orbit.delay ?? 0,
-          duration: orbit.duration,
-          repeat: Infinity,
-        },
-      }}
-
       style={{
-        zIndex: zIndex
+        zIndex,
+        translateX,
+        translateY
       }}
 
     />
