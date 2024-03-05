@@ -20,3 +20,10 @@ export const getRotators = (angle: number) => {
 }
 
 export const zip = <T, U, R>(a: T[], b: U[], func: (c: T, d: U) => R) => a.map((v,i) => func(v, b[i]));
+
+export const closestWrappedValue = (current: number, target: number, min: number, max: number) => {
+    const range = max-min;
+    return euclidianMod(target - current + range/2, range) + current - range/2;
+}
+
+export const euclidianMod = (a: number, n: number) => a - Math.floor(a / Math.abs(n)) * Math.abs(n);

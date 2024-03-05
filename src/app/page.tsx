@@ -1,69 +1,92 @@
 "use client";
 import { Planet } from "@/components/planet";
-import {
-  AnimationPlaybackControls,
-  animate,
-  motion,
-  useMotionValue,
-} from "framer-motion";
-import { useEffect, useState } from "react";
+import { closestWrappedValue } from "@/utils";
+import { animate, cubicBezier, motion, useMotionValue } from "framer-motion";
+import { useCallback, useEffect } from "react";
+
+type Experience = {
+  name: string;
+};
+
+const experiences = [
+  {
+    name: "flow in the field",
+  },
+  {
+    name: "happy eastie",
+  },
+  {
+    name: "mastercontrol",
+  },
+  {
+    name: "klaviyo",
+  },
+];
 
 export default function Home() {
   const period = 16;
 
   const time = useMotionValue(0);
-  const [controls, setControls] = useState<AnimationPlaybackControls>();
 
-  useEffect(() => {
-    setControls(
-      animate(time, [0, period], {
+  const runMainAnimation = useCallback(() => {
+
+    animate(time, period, {
+      ease: cubicBezier(0.100, 0.000, 0.585, 0.550),
+      duration: period-time.get(),
+      onComplete: () => animate(time, [0, period], {
         ease: "linear",
         repeat: Infinity,
         duration: period,
       })
-    );
+    });
+;
   }, [time]);
 
+  useEffect(() => {
+    runMainAnimation();
+  }, [runMainAnimation]);
+
+  const timeBetweenPlanets = period / experiences.length;
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center">
+    <main className="flex min-h-screen flex-col items-center justify-evenly">
       <motion.div className="bg-blue-400 size-60 flex items-center justify-center rounded-full">
-        {[0, period / 4, period / 2, (period * 3) / 4].map((d) => (
+        {experiences.map((exp, i) => (
           <Planet
-            key={d}
+            key={exp.name}
             className="bg-yellow-300 size-12 rounded-full absolute"
             orbit={{
               xRadius: 180,
               yRadius: 60,
               duration: period,
-              delay: d,
-              rotation: 30
+              delay: timeBetweenPlanets * i,
+              rotation: 30,
             }}
             time={time}
           >
-            a
+            {exp.name}
           </Planet>
         ))}
         star
       </motion.div>
-      {controls && (
-        <>
-          <button
-            onClick={() => {
-              console.log({ animating: time.isAnimating() });
-              controls.state === "running" ? controls.pause() : controls.play();
+      <div className="flex flex-col gap-2">
+        {experiences.map((exp, i) => (
+          <motion.div
+            key={exp.name}
+            className="bg-blue-500"
+            onHoverStart={() => {
+              const key = timeBetweenPlanets * (-i - 1)
+              const target = closestWrappedValue(time.get(), key , 0, period);
+              animate(time, target, { duration: 2 });
+            }}
+            onHoverEnd={() => {
+              runMainAnimation();
             }}
           >
-            Pause/Unpause
-          </button>
-          <input
-            type="range"
-            min={0}
-            max={period}
-            onChange={(e) => (controls.time = e.target.valueAsNumber)}
-            step="any"
-          />
-        </>
-      )}
+            {exp.name}
+          </motion.div>
+        ))}
+      </div>
     </main>
   );
 }
