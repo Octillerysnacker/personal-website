@@ -29,17 +29,16 @@ export default function Home() {
   const time = useMotionValue(0);
 
   const runMainAnimation = useCallback(() => {
-
     animate(time, period, {
-      ease: cubicBezier(0.100, 0.000, 0.585, 0.550),
-      duration: period-time.get(),
-      onComplete: () => animate(time, [0, period], {
-        ease: "linear",
-        repeat: Infinity,
-        duration: period,
-      })
+      ease: cubicBezier(0.1, 0.0, 0.585, 0.55),
+      duration: period - time.get(),
+      onComplete: () =>
+        animate(time, [0, period], {
+          ease: "linear",
+          repeat: Infinity,
+          duration: period,
+        }),
     });
-;
   }, [time]);
 
   useEffect(() => {
@@ -75,9 +74,9 @@ export default function Home() {
             key={exp.name}
             className="bg-blue-500"
             onHoverStart={() => {
-              const key = timeBetweenPlanets * (-i - 1)
-              const target = closestWrappedValue(time.get(), key , 0, period);
-              animate(time, target, { duration: 2 });
+              const key = timeBetweenPlanets * (-i - 1);
+              const target = closestWrappedValue(time.get(), key, 0, period);
+              animate(time, target, { type: "spring", damping: 100, restDelta: 0.005 });
             }}
             onHoverEnd={() => {
               runMainAnimation();
