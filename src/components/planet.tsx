@@ -44,6 +44,14 @@ export function Planet(props: PlanetProps) {
         translateX,
         translateY,
       }}
+
+      drag
+
+      dragSnapToOrigin
+
+      dragConstraints={{top: -30, left: -30, bottom: 30, right: 30}}
+
+      dragElastic={0.25}
     />
   );
 }
