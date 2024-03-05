@@ -1,5 +1,5 @@
 import { getRotators } from "@/utils";
-import { MotionValue, motion, useTransform } from "framer-motion";
+import { MotionValue, motion, useMotionValue, useTransform } from "framer-motion";
 import { ComponentProps } from "react";
 
 export type EllipseParameters = {
@@ -34,7 +34,9 @@ export function Planet(props: PlanetProps) {
   const translateX = useTransform(() => rotate.x(localX(), localY()) + (orbit.xOrigin ?? 0));
 
   const translateY = useTransform(() => rotate.y(localX(), localY()) + (orbit.yOrigin ?? 0));
-  const zIndex = useTransform(() => -Math.sin(t()));
+
+  const isDragging = useMotionValue<"yes" | "no">("no");
+  const zIndex = useTransform(() => isDragging.get() === "yes" ? 1 : -Math.sin(t()));
 
   return (
     <motion.div
@@ -46,12 +48,11 @@ export function Planet(props: PlanetProps) {
       }}
 
       drag
-
       dragSnapToOrigin
-
       dragConstraints={{top: -30, left: -30, bottom: 30, right: 30}}
-
       dragElastic={0.25}
+      onDragStart={() => isDragging.set("yes")}
+      onDragEnd={() => isDragging.set("no")}
     />
   );
 }
