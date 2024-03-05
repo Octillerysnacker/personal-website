@@ -34,11 +34,9 @@ export default function Home() {
             orbit={{
               xRadius: 180,
               yRadius: 60,
-              xOrigin: 0,
-              yOrigin: 0,
               duration: period,
               delay: d,
-              rotation: 0
+              rotation: 30
             }}
             time={time}
           >
@@ -62,6 +60,7 @@ export default function Home() {
             min={0}
             max={period}
             onChange={(e) => (controls.time = e.target.valueAsNumber)}
+            step="any"
           />
         </>
       )}
