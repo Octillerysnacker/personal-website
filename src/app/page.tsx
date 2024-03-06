@@ -72,6 +72,7 @@ export default function Home() {
         <motion.div
           className="bg-blue-400 size-48 flex items-center justify-center rounded-full"
           whileHover={{ scale: 1.1 }}
+          whileTap={{scale: 0.9}}
           transition={{ ease: "easeOut" }}
         >
           <p className="text-3xl">
@@ -91,7 +92,8 @@ export default function Home() {
                 rotation: 30,
               }}
               time={time}
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ scale: 1.2 }}
+              whileTap={{scale: 0.9}}
               transition={{ ease: "easeOut" }}
             >
               <div className="size-4/5 relative">
@@ -114,6 +116,7 @@ export default function Home() {
             key={exp.name}
             className="bg-blue-400 p-2 rounded"
             whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9}}
             transition={{ ease: "easeOut" }}
             onHoverStart={() => {
               const key = timeBetweenPlanets * (-i - 1);
