@@ -36,7 +36,7 @@ export function Planet(props: PlanetProps) {
   const translateY = useTransform(() => rotate.y(localX(), localY()) + (orbit.yOrigin ?? 0));
 
   const isDragging = useMotionValue<"yes" | "no">("no");
-  const zIndex = useTransform(() => isDragging.get() === "yes" ? 1 : -Math.sin(t()));
+  const zIndex = useTransform(() => (isDragging.get() === "yes" ? 1 : -Math.sin(t())) + 1);
 
   return (
     <motion.div

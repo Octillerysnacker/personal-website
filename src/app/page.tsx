@@ -70,7 +70,7 @@ export default function Home() {
       </div>
       <div className="flex items-center justify-center">
         <motion.div
-          className="bg-blue-400 size-48 flex items-center justify-center rounded-full"
+          className="bg-blue-400 size-48 flex items-center justify-center rounded-full z-[1]"
           whileHover={{ scale: 1.1 }}
           whileTap={{scale: 0.9}}
           transition={{ ease: "easeOut" }}
