@@ -1,25 +1,32 @@
 "use client";
 import { Planet } from "@/components/planet";
+import { CS, English } from "@/components/text";
 import { closestWrappedValue } from "@/utils";
 import { animate, cubicBezier, motion, useMotionValue } from "framer-motion";
+import Image from "next/image";
 import { useCallback, useEffect } from "react";
 
 type Experience = {
   name: string;
+  thumbnail: string;
 };
 
-const experiences = [
+const experiences: Experience[] = [
   {
-    name: "flow in the field",
+    name: "Flow in the Field",
+    thumbnail: "/flow.png",
   },
   {
-    name: "happy eastie",
+    name: "HappyEastie",
+    thumbnail: "/happyeastieimage.svg",
   },
   {
-    name: "mastercontrol",
+    name: "MasterControl",
+    thumbnail: "mastercontrol.svg",
   },
   {
-    name: "klaviyo",
+    name: "Klaviyo",
+    thumbnail: "klaviyo.svg",
   },
 ];
 
@@ -52,12 +59,16 @@ export default function Home() {
   const timeBetweenPlanets = period / experiences.length;
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-evenly">
-      <motion.div className="bg-blue-400 size-60 flex items-center justify-center rounded-full">
+    <main className="flex min-h-screen flex-col items-center justify-around">
+      <div>
+        <h1 className="text-4xl"><English>Hi, I'm</English> <CS>Robert.</CS></h1>
+        <h2><CS>Click on any of</CS>  <English>the planets to learn more.</English></h2>
+      </div>
+      <motion.div className="bg-blue-400 size-48 flex items-center justify-center rounded-full">
         {experiences.map((exp, i) => (
           <Planet
             key={exp.name}
-            className="bg-yellow-300 size-12 rounded-full absolute"
+            className="bg-white size-20 rounded-full absolute flex items-center justify-center"
             orbit={{
               xRadius: 180,
               yRadius: 60,
@@ -67,16 +78,22 @@ export default function Home() {
             }}
             time={time}
           >
-            {exp.name}
+            <div className="size-4/5 relative">
+              <Image src={exp.thumbnail} fill objectFit="contain" alt="" className="pointer-events-none"/>
+            </div>
           </Planet>
         ))}
-        star
+        <p className="text-3xl">
+          <English>about</English>
+          {" "}
+          <CS>me</CS>
+        </p>
       </motion.div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-4">
         {experiences.map((exp, i) => (
           <motion.div
             key={exp.name}
-            className="bg-blue-500"
+            className="bg-blue-400 p-2 rounded"
             onHoverStart={() => {
               const key = timeBetweenPlanets * (-i - 1);
               const target = closestWrappedValue(time.get(), key, 0, period);
@@ -90,7 +107,7 @@ export default function Home() {
               runMainAnimation();
             }}
           >
-            {exp.name}
+            <CS>{exp.name}</CS>
           </motion.div>
         ))}
       </div>
