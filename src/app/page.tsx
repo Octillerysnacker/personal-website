@@ -58,6 +58,16 @@ export default function Home() {
 
   const timeBetweenPlanets = period / experiences.length;
 
+  const tweenToIndex = (i: number) => {
+    const key = timeBetweenPlanets * (-i - 1);
+    const target = closestWrappedValue(time.get(), key, 0, period);
+    animate(time, target, {
+      type: "spring",
+      damping: 100,
+      restDelta: 0.005,
+    });
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-around">
       <div>
@@ -117,16 +127,10 @@ export default function Home() {
             className="bg-blue-400 p-2 rounded"
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9}}
+            onTapStart={() => tweenToIndex(i)}
+            onTap={runMainAnimation}
             transition={{ ease: "easeOut" }}
-            onHoverStart={() => {
-              const key = timeBetweenPlanets * (-i - 1);
-              const target = closestWrappedValue(time.get(), key, 0, period);
-              animate(time, target, {
-                type: "spring",
-                damping: 100,
-                restDelta: 0.005,
-              });
-            }}
+            onHoverStart={() => tweenToIndex(i)}
             onHoverEnd={() => {
               runMainAnimation();
             }}
