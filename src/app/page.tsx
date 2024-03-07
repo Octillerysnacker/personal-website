@@ -93,7 +93,6 @@ export default function Home() {
           {experiences.map((exp, i) => (
             <Planet
               key={exp.name}
-              className="bg-white size-20 rounded-full absolute flex items-center justify-center"
               orbit={{
                 xRadius: 180,
                 yRadius: 60,
@@ -102,9 +101,7 @@ export default function Home() {
                 rotation: 30,
               }}
               time={time}
-              whileHover={{ scale: 1.2 }}
-              whileTap={{scale: 0.9}}
-              transition={{ ease: "easeOut" }}
+
             >
               <div className="size-4/5 relative">
                 <Image

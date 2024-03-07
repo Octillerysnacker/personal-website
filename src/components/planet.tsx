@@ -1,51 +1,37 @@
-import { getRotators } from "@/utils";
-import { MotionValue, motion, useMotionValue, useTransform } from "framer-motion";
-import { ComponentProps } from "react";
+import { EllipseParameters, useOrbit } from "@/hooks/useOrbit";
+import { MotionValue, animate, motion, useMotionValue, useTransform } from "framer-motion";
+import { PropsWithChildren } from "react";
 
-export type EllipseParameters = {
-  xRadius: number;
-  yRadius: number;
-  xOrigin?: number;
-  yOrigin?: number;
-  duration: number;
-  rotation?: number;
-  delay?: number;
-};
-export type PlanetProps = {
+export type PlanetProps = PropsWithChildren<{
   orbit: EllipseParameters;
   time: MotionValue<number>;
-} & ComponentProps<typeof motion.div>;
+}>;
 
 export function Planet(props: PlanetProps) {
   const { orbit, time } = props;
 
-  const localTime = useTransform(
-    () => (time.get() + (orbit.delay ?? 0)) % orbit.duration
-  );
-
-  const rotate = getRotators(orbit.rotation ?? 0);
-
-  const t = () => (localTime.get() * Math.PI * 2) / orbit.duration;
-
-  const localX = () => orbit.xRadius * Math.cos(t());
-
-  const localY = () => -orbit.yRadius * Math.sin(t());
-
-  const translateX = useTransform(() => rotate.x(localX(), localY()) + (orbit.xOrigin ?? 0));
-
-  const translateY = useTransform(() => rotate.y(localX(), localY()) + (orbit.yOrigin ?? 0));
+  const {t, x, y} = useOrbit(time, orbit);
 
   const isDragging = useMotionValue<"yes" | "no">("no");
   const zIndex = useTransform(() => (isDragging.get() === "yes" ? 1 : -Math.sin(t())) + 1);
 
+  let mode : "orbiting" | "modal" = "orbiting";
+
+  const modalProgress = useMotionValue(0);
+
+  const finalX = useTransform(() => x.get() * (1 - modalProgress.get()));
+  const finalY = useTransform(() => y.get() * (1 - modalProgress.get()));
+  const finalZ = useTransform(() => zIndex.get() * (1 - modalProgress.get()) + modalProgress.get())
+
   return (
     <motion.div
-      {...props}
       style={{
-        zIndex,
-        translateX,
-        translateY,
+        zIndex: finalZ,
+        translateX: finalX,
+        translateY: finalY,
       }}
+
+      className="bg-white size-20 rounded-full absolute flex items-center justify-center"
 
       drag
       dragSnapToOrigin
@@ -53,6 +39,12 @@ export function Planet(props: PlanetProps) {
       dragElastic={0.25}
       onDragStart={() => isDragging.set("yes")}
       onDragEnd={() => isDragging.set("no")}
-    />
+
+      whileHover={{ scale: 1.2 }}
+      whileTap={{scale: 0.9}}
+      transition={{ ease: "easeOut" }}
+
+      onTap={() => modalProgress.get() === 0 ? animate(modalProgress, 1) : animate(modalProgress, 0)}
+    >{props.children}</motion.div>
   );
 }
