@@ -78,7 +78,7 @@ export default function Home() {
           <CS>NEU &apos;25, </CS><CS>CS + </CS><English>English</English>
         </h2>
         <h2 className="leading-tight">
-          <CS>You can click and drag the planets.</CS><br/>
+          <CS>You can click and drag the planets.</CS>
           <English>They don&apos;t do anything, but I think it&apos;s fun.</English><br/><br/>
           <CS>Originally, I was planning to add my experiences here. </CS><English>But, I decided to do that another time.</English><br/><br/>
           <CS>Meanwhile, you can visit my <a className="underline text-blue-400 hover:text-blue-600 visited:text-purple-400 visited:hover:text-purple-600" href="https://www.linkedin.com/in/robert-rosas-3a62a0256">LinkedIn</a> and <a className="underline text-blue-400 hover:text-blue-600 visited:text-purple-400 visited:hover:text-purple-600"href="https://github.com/octillerysnacker">GitHub</a>.</CS>
